@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GASMIG - Geração de Notas de Atendimento</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Ferramenta de Geração de Notas - GASMIG</h1>
+            <p>Sistema automatizado para criação de notas de atendimento</p>
+        </header>
+
+        <main>
+            <!-- Seleção do Tipo de Solicitação -->
+            <section class="card">
+                <h2>Tipo de Solicitação</h2>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="tipo" value="agrupamento" checked>
+                        <span>Agrupamento</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="tipo" value="parcelamento">
+                        <span>Parcelamento</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="tipo" value="segunda_via">
+                        <span>Segunda Via</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Seção de Faturas -->
+            <section class="card">
+                <h2>Faturas</h2>
+                <div id="faturas-container">
+                    <!-- Faturas serão adicionadas aqui dinamicamente -->
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="adicionarFatura()">+ Adicionar Fatura</button>
+                
+                <div class="total-section">
+                    <label>Valor Total:</label>
+                    <input type="text" id="valorTotal" readonly value="R$ 0,00">
+                </div>
+
+                <div id="status-sequencial" class="status-info"></div>
+            </section>
+
+            <!-- Campos Específicos -->
+            <section class="card">
+                <h2>Informações Adicionais</h2>
+                
+                <!-- Campos para Agrupamento -->
+                <div id="campos-agrupamento" class="campos-especificos">
+                    <div class="form-group">
+                        <label>Data para Pagamento:</label>
+                        <input type="text" id="dataPagamento" placeholder="DD/MM/AAAA" maxlength="10">
+                    </div>
+                </div>
+
+                <!-- Campos para Parcelamento -->
+                <div id="campos-parcelamento" class="campos-especificos" style="display: none;">
+                    <div class="form-group">
+                        <label>Valor da Entrada:</label>
+                        <input type="text" id="valorEntrada" placeholder="R$ 0,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade de Parcelas:</label>
+                        <input type="number" id="qtdParcelas" min="1" placeholder="Ex: 3">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor da Parcela:</label>
+                        <input type="text" id="valorParcela" placeholder="R$ 0,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Pagamento da Entrada:</label>
+                        <input type="text" id="dataPagamentoEntrada" placeholder="DD/MM/AAAA" maxlength="10">
+                    </div>
+                </div>
+
+                <!-- Campos para Segunda Via (não tem campos específicos além dos contatos) -->
+                <div id="campos-segunda-via" class="campos-especificos" style="display: none;">
+                    <p class="info-message">Preencha apenas as informações de contato abaixo.</p>
+                </div>
+            </section>
+
+            <!-- Informações de Contato -->
+            <section class="card">
+                <h2>Informações de Contato</h2>
+                
+                <div class="form-group">
+                    <label>Contato via:</label>
+                    <select id="canalContato">
+                        <option value="Digisac">Digisac</option>
+                        <option value="E-mail">E-mail</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>WhatsApp/Telefone:</label>
+                    <input type="text" id="contatoWhatsapp" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail:</label>
+                    <input type="email" id="contatoEmail" placeholder="email@exemplo.com">
+                </div>
+            </section>
+
+            <!-- Botão Gerar -->
+            <button type="button" class="btn btn-primary btn-large" onclick="gerarTexto()">Gerar Nota</button>
+
+            <!-- Área de Mensagens (sempre visível) -->
+            <div id="mensagem" class="mensagem" style="margin-top: 20px;"></div>
+
+            <!-- Resultado -->
+            <section class="card resultado-section" id="resultado-section" style="display: none;">
+                <h2>Texto Gerado</h2>
+                <textarea id="textoGerado" readonly rows="8"></textarea>
+                
+                <div class="button-group">
+                    <button type="button" class="btn btn-success" onclick="copiarTexto()">📋 Copiar Texto</button>
+                    <button type="button" class="btn btn-info" onclick="salvarHistorico()">💾 Salvar no Histórico</button>
+                    <button type="button" class="btn btn-secondary" onclick="downloadHistorico()">📥 Baixar Histórico (CSV)</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2025 GASMIG - Ferramenta de Geração de Notas v1.0</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
+
