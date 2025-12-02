@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GASMIG - Geração de Notas de Atendimento</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2.1">
 </head>
 <body>
     <div class="container">
@@ -13,7 +13,16 @@
             <p>Sistema automatizado para criação de notas de atendimento</p>
         </header>
 
+        <!-- Tabs de Navegação -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="trocarAba('nova-nota')">Nova Nota</button>
+            <button class="tab-button" onclick="trocarAba('historico')">Histórico</button>
+        </div>
+
         <main>
+            <!-- Aba: Nova Nota -->
+            <div id="aba-nova-nota" class="tab-content active">
+            
             <!-- Seleção do Tipo de Solicitação -->
             <section class="card">
                 <h2>Tipo de Solicitação</h2>
@@ -32,6 +41,30 @@
                     </label>
                 </div>
             </section>
+            
+            <!-- Seção: Dados do Cliente -->
+            <section class="card">
+                <h2>Dados do Cliente</h2>
+                <div class="form-group">
+                    <label>Número do Cliente (PN):</label>
+                    <div style="display: flex; gap: 10px;">
+                        <select id="pnPrefixo" style="width: 120px;">
+                            <option value="70000">70000</option>
+                            <option value="71000">71000</option>
+                            <option value="72000">72000</option>
+                            <option value="73000">73000</option>
+                            <option value="74000">74000</option>
+                            <option value="75000">75000</option>
+                            <option value="76000">76000</option>
+                            <option value="77000">77000</option>
+                            <option value="78000">78000</option>
+                            <option value="79000">79000</option>
+                        </select>
+                        <input type="text" id="pnSufixo" placeholder="00000" maxlength="5" style="flex: 1;">
+                    </div>
+                    <small style="color: #666;">PN completo: <span id="pnCompleto">70000_____</span></small>
+                </div>
+            </section>
 
             <!-- Seção de Faturas -->
             <section class="card">
@@ -47,6 +80,16 @@
                 </div>
 
                 <div id="status-sequencial" class="status-info"></div>
+                
+                <!-- Anexar Imagens -->
+                <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+                    <label style="font-weight: 600; color: #667eea; margin-bottom: 10px; display: block;">
+                        📎 Anexar Imagens (Prints)
+                    </label>
+                    <input type="file" id="inputImagens" accept="image/*" multiple style="margin-bottom: 10px;">
+                    <div id="previewImagens" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                    <small style="color: #666;">Máximo 100MB por imagem. Você pode anexar quantas imagens precisar.</small>
+                </div>
             </section>
 
             <!-- Campos Específicos -->
@@ -110,8 +153,11 @@
                 </div>
             </section>
 
-            <!-- Botão Gerar -->
-            <button type="button" class="btn btn-primary btn-large" onclick="gerarTexto()">Gerar Nota</button>
+            <!-- Botões de Ação -->
+            <div class="button-group-actions">
+                <button type="button" class="btn btn-primary btn-large" onclick="gerarTexto()">Gerar Nota</button>
+                <button type="button" class="btn btn-secondary btn-large" onclick="limparFormulario()">🗑️ Limpar Dados</button>
+            </div>
 
             <!-- Área de Mensagens (sempre visível) -->
             <div id="mensagem" class="mensagem" style="margin-top: 20px;"></div>
@@ -127,6 +173,51 @@
                     <button type="button" class="btn btn-secondary" onclick="downloadHistorico()">📥 Baixar Histórico (CSV)</button>
                 </div>
             </section>
+            
+            </div>
+            <!-- Fim Aba: Nova Nota -->
+            
+            <!-- Aba: Histórico -->
+            <div id="aba-historico" class="tab-content">
+                <section class="card">
+                    <h2>Histórico de Notas Geradas</h2>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <input type="text" id="buscarHistorico" placeholder="🔍 Buscar no histórico..." style="width: 100%; padding: 10px;">
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table id="tabelaHistorico" class="historico-table">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>PN</th>
+                                    <th>Tipo</th>
+                                    <th>Valor Total</th>
+                                    <th>Imagens</th>
+                                    <th>Texto</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpoHistorico">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: #999;">
+                                        Nenhum registro no histórico ainda.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button type="button" class="btn btn-secondary" onclick="carregarHistorico()">🔄 Atualizar</button>
+                        <button type="button" class="btn btn-info" onclick="exportarHistoricoCSV()">📥 Exportar CSV</button>
+                        <button type="button" class="btn btn-danger" onclick="limparHistorico()">🗑️ Limpar Histórico</button>
+                    </div>
+                </section>
+            </div>
+            <!-- Fim Aba: Histórico -->
+            
         </main>
 
         <footer>
@@ -134,7 +225,18 @@
         </footer>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- Modal para Visualizar Imagens -->
+    <div id="modalImagens" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close" onclick="fecharModalImagens()">&times;</span>
+            <h2 style="margin-bottom: 20px;">Imagens Anexadas</h2>
+            <div id="galeria-imagens" style="display: flex; flex-wrap: wrap; gap: 15px; max-height: 70vh; overflow-y: auto;">
+                <!-- Imagens serão inseridas aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=2.1"></script>
 </body>
 </html>
 

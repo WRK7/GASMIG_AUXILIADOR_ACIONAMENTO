@@ -20,6 +20,12 @@ body {
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     overflow: hidden;
+    transition: max-width 0.3s ease;
+}
+
+/* Aumentar largura quando estiver na aba de histórico */
+.container:has(#aba-historico.active) {
+    max-width: 1400px;
 }
 
 /* Header */
@@ -38,6 +44,47 @@ header h1 {
 header p {
     font-size: 1rem;
     opacity: 0.9;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 2px solid #ddd;
+    padding: 0 30px;
+}
+
+.tab-button {
+    padding: 15px 30px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.tab-button.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: white;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
 }
 
 /* Main Content */
@@ -263,6 +310,8 @@ textarea:focus {
 
 .btn-secondary:hover {
     background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
 }
 
 .btn-success {
@@ -284,10 +333,28 @@ textarea:focus {
 }
 
 .btn-large {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.2rem;
-    margin-top: 10px;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+}
+
+.button-group-actions .btn-large {
+    width: auto;
+    margin-top: 0;
+}
+
+/* Button Group Actions - Container principal dos botões Gerar e Limpar */
+.button-group-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.button-group-actions .btn-primary {
+    flex: 1;
+}
+
+.button-group-actions .btn-secondary {
+    min-width: 180px;
 }
 
 /* Button Group */
@@ -354,6 +421,202 @@ textarea {
     padding: 12px;
     border-radius: 8px;
     border-left: 4px solid #17a2b8;
+}
+
+/* Tabela de Histórico */
+.historico-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.historico-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.historico-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.historico-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.historico-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.historico-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.texto-preview {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.texto-preview:hover {
+    color: #667eea;
+    text-decoration: underline;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.preview-imagem {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.preview-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-imagem-remover {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.preview-imagem-remover:hover {
+    background: #ff3838;
+    transform: scale(1.1);
+}
+
+.galeria-imagem {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.galeria-imagem:hover {
+    transform: scale(1.05);
+}
+
+.galeria-imagem img {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.modal-close:hover {
+    background: #ff4757;
+    color: white;
 }
 
 /* Footer */
